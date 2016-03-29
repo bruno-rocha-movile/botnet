@@ -4,7 +4,7 @@ from hashlib import *
 
 class Command(object):
 	
-	def __init__(self, start, end, cmd, out, err):
+	def __init__(self, start, end, cmd, out, err=""):
 		self.start = start
 		self.end = end
 		self.cmd = cmd
