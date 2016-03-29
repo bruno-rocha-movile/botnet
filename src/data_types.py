@@ -13,42 +13,33 @@ class CoreInfo(object):
 		self.logging = Logging
 
 
+class NetworkInfo(object):
+	def __init__(self, NetworkName, NetworkID, IPAddress, Gateway, External):
+		self.netName = NetworkName
+		self.nid = NetworkID
+		self.ip = IPAddress
+		self.gw = Gateway
+		self.ex = External
+
+
+class PlatformInfo(object):
+	def __init__(self, Arch, Platform, Kernel, PythonVersion):
+		self.arch = Arch
+		self.plat = Platform
+		self.kern = Kernel
+		self.py = PythonVersion
+
+
+class Clients(object):
+	def __init__(self, Clients):
+		self.clients = Clients #Array of Client ID's
+
+
 class Client(object):
-
-	def __init__(self, ):
-
-		"""
-		client_id 	ID completely unique to the client sending the token
-		ip		Internal IP Address of the client sending the token (Behind NAT)
-		cmd		An array of detailed Command objects
-		err		An array of python exceptions that were encountered
-		info		Used on the first beacon to update client information, can be left blank
-		"""
-
-		self.client_id = client_id 
-		self.ip = ip
-		self.cmd = cmd
-		self.err = err
-		if not info:
-			self.info = [ platform.platform(), platform.release(), platform.machine(), platform.python_version() ]
-		else:
-			self.info =  []
-
-	def __str__(self):
-
-		response =  "<Response_Token>"+\
-			"\n\tClient_ID: "+self.client_id+\
-			"\n\tIP Address: "+self.ip+\
-			"\n\n\tInfo: \n"
-			
-		for element in self.info:
-			response+="\n\t"+str(element)
-		response+="\n"
-		for element in self.cmd:
-			response+="\n"+str(element)
-	
-		return response + "\n\n</Reponse_Token>\n"
-
+	def __init__(self, Core, Network, Platform):
+		self.Core = Core
+		self.Network = Network
+		self.Platform = Platform
 
 class Reply_Token(object):
 
@@ -73,7 +64,7 @@ class Reply_Token(object):
 
 	def __str__(self):
 
-		response =  "<Response_Token>"+\
+		response =  "<Reply_Token>"+\
 			"\n\tClient_ID: "+self.client_id+\
 			"\n\tIP Address: "+self.ip+\
 			"\n\n\tInfo: \n"
@@ -84,7 +75,7 @@ class Reply_Token(object):
 		for element in self.cmd:
 			response+="\n"+str(element)
 	
-		return response + "\n\n</Reponse_Token>\n"
+		return response + "\n\n</Reply_Token>\n"
 
 
 class Exec_Token(object):
@@ -133,7 +124,7 @@ class Set_Token(object):
 
 	def __str__(self):
 
-		response =  "<Response_Token>"+\
+		response =  "<Set_Token>"+\
 			"\n\tClient_ID: "+self.client_id+\
 			"\n\tIP Address: "+self.ip+\
 			"\n\n\tInfo: \n"
