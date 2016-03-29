@@ -66,7 +66,7 @@ class Reply_Token(object):
 		self.ip = ip
 		self.cmd = cmd
 		self.err = err
-		if not info:
+		if info == [0]:
 			self.info = [ platform.platform(), platform.release(), platform.machine(), platform.python_version() ]
 		else:
 			self.info =  []
