@@ -1,7 +1,7 @@
 import platform
 from command import Command
 
-class Reply_Token(object):
+class Set_Token(object):
 
 	def __init__(self, client_id, ip, cmd, err=[], info=[]):
 
@@ -38,7 +38,7 @@ class Reply_Token(object):
 
 
 def debug():
-	token = Reply_Token("SAM_PC", "129.0.0.1", [Command("Now","Eventually","ls","No Files","Hacked"), Command("Later", "ProbsNot","cat /dev/urandom", "HAHAHA", "So many")], [0])
+	token = Set_Token("SAM_PC", "129.0.0.1", [Command("Now","Eventually","ls","No Files","Hacked"), Command("Later", "ProbsNot","cat /dev/urandom", "HAHAHA", "So many")], [0])
 
 	print(str(token))
 
