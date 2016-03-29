@@ -10,17 +10,8 @@ A persistent and stealthy botnet using several methods of beaconing.
 2. master.py
 	The command and control center for the botnet
 
-3. exec_token.py
-	Command Token sent from the master to the bots
-
-4. set_token.py
-	Token sent from the master to update bot settings
-
-5. reply_token.py
-	This is the beacon message the bot will send
-
-6. command.py
-	An object to represent and store information about a sent command
+3. data_types.py
+	Contains datatypes sent between the bot and master, as well as SQL objects	
 
 
 -- PIP Install Dependencies --

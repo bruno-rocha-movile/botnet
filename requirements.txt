@@ -1,3 +1,4 @@
 jsonpickle
 simplejson
-shelx
+OpenSSL
+mysql
