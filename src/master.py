@@ -8,7 +8,7 @@ from data_types import *
 sql_user = "botnet-app"
 sql_host = "127.0.0.1"
 sql_db = "botnet"
-
+queryDebug = True
 
 def runQuery (query, mode="fetchone", User=sql_user, Host=sql_host, Database=sql_db):
 
@@ -27,66 +27,62 @@ def runQuery (query, mode="fetchone", User=sql_user, Host=sql_host, Database=sql
 		result =  cursor.fetchone()
 	cursor.close()
 	cnx.close()
+
+	if queryDebug:
+		print("\nQuery Executed as "+User+" on "+Host+" --> "+Database+"  with mode: "+mode)
+		print("\t"+query+"\n")
+	
 	return result
 
-def addNetwork(NetworkID, NetworkName, Gateway, Clients):
-	pass #TODO
-def addGroup(GroupID, GroupName, Clients):
-	pass
+
+def updateNetwork (NetworkID, NetworkName, Clients):
+	runQuery("CREATE TABLE IF NOT EXISTS networks "+\
+		 "(NetworkID VARCHAR(255), NetworkName VARCHAR(50), Clients JSON);")
+	runQuery("REPLACE INTO bots VALUES ( '"+NetworkID+"','"+NetworkName+"','"+Clients+"' );")
 
 
-def checkEntry (table_name, entry):
-	if runQuery(table_name, "SELECT COUNT(*) FROM "+table_name+" WHERE "+entry+";")[0] < 1:
-		return False
-	else:
-		return True
+def checkNetwork (NetworkID):
+	return runQuery("SELECT EXISTS (SELECT NetworkID FROM networks WHERE NetworkID = "+NetworkID+";")
 
-def checkTable (user, host, database, table_name, fields):
 
-	#sanitize(table_name)
-	#sanitize(fields)
+def removeNetwork (NetworkID):
+	runQuery("DELETE FROM networks WHERE NetworkID = "+NetworkID+";")
 
-	if runQuery("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = "+table_name)[0] != 1:
-		runQuery("CREATE TABLE"+table_name+" ( "+fields+" );")
-		return False
-	else:
-		return True
+
+def updateGroup (GroupID, GroupName, Clients):
+	runQuery("CREATE TABLE IF NOT EXISTS groups "+\
+		 "(GroupID VARCHAR(255), GroupName VARCHAR(50), Clients JSON)")
+	runQuery("REPLACE INTO bots VALUES ( '"+GroupID+"','"+GroupName+"','"+Clients+"' );")
 	
 
-def checkDatabase (user, host, database):
-	
-	#Check if database exists
-	#runQuery(user, host, database
-	
-	#Check if tables exist 
-	#TODO: Figure out appropriate size varchar
-	bots = checkTable(user, host, database, "Bots", 
-						"GroupID VARCHAR(255),"+\
-						"GroupName VARCHAR(20)"+\
-						"ClientID VARCHAR(255),"+\
-						"ClientName VARCHAR(20),"+\
-						"NetworkName VARCHAR(20),"+\
-						"NetworkID VARCHAR(255),"+\
-						"IPAddress VARCHAR(20),"+\
-						"Client JSON")
+def checkGroup (GroupID):
+	return runQuery("SELECT EXISTS (SELECT GroupID FROM groups WHERE GroupID = "+GroupID+";")
 
-	nets = checkTable(user,host,database, "Networks",
-						 "NetworkID VARCHAR(255),"+\
-					 	 "NetworkName VARCHAR(20),"+\
-						 "Gateway VARCHAR(20),"+\
-						 "Clients JSON)" ) #Clients Object, contains array of Client ID's
+
+def removeGroup (GroupID):
+	runQuery("DELETE FROM groups WHERE GroupID = "+GroupID+";")
+
+
+
+def updateClient (ClientID, NetworkID, GroupID, Client):
+	runQuery("CREATE TABLE IF NOT EXISTS bots "+\
+		 "(ClientID VARCHAR(255), NetworkID VARCHAR(255),"+\
+		 "GroupID VARCHAR(255), Client JSON, PRIMARY KEY (ClientID));")
+	runQuery("REPLACE INTO bots VALUES ( '"+ClientID+"','"+NetworkID+"','"+GroupID+"','"+Client+"' );")
+
+def checkClient (ClientID):
+	return runQuery("SELECT EXISTS (SELECT ClientID FROM networks WHERE ClientID = "+ClientID+";")
+
+
+def removeClient (ClientID):
+	runQuery("DELETE FROM networks WHERE ClientID = "+ClientID+";")
+
+
+
+
+def init ():
+	if not checkNetwork ( "0" ):
+		updateNetwork( "0", "Default", None )
+	if not checkGroup ( "0" ):
+		updateGroup( "0", "Default", None )
 	
-	groups = checkTable(user,host,database, "Groups",
-						 "GroupID VARCHAR(255),"+\
-						 "GroupName VARCHAR(20),"+\
-						 "Clients JSON" ) #Clients Object, contains array of Client ID's
-						 
-
-	q = checkTable(user,host,database, "Queue", 
-						 "ClientID VARCHAR(255),"+\
-						 "Token JSON")
-
-	if not nets:
-		addNetwork(0, "Default", "0.0.0.0", None)
-	if not groups:
-		addGroup(0, "Default", None) 	

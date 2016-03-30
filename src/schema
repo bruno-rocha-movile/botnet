@@ -1,0 +1,43 @@
+#Server Side Management Fields
+	#Client Name
+	#Group Name
+	#Network Name
+	
+
+# Bots
+	# ClientID GroupID NetworkID Client-(Object)
+	
+		# ClientID  - ID of Client
+		# GroupID   - ID of Client's Group
+		# NetworkID - ID of Client's Network 
+		# Logging   - Is Logging enabled for this client? 0 or 1
+		# Client-(Object) - 
+				# NetworkInfo-(Object)
+					# IPAddress
+					# Gateway
+					# External
+
+				# MachineInfo (Object)
+					# Platform
+					# Architecture
+					# Kernel Version
+					# Python Version
+
+# Networks
+
+	# NetworkID NetworkName Clients
+	
+		# NetworkID	   - Unique Network Identifier
+		# NetworkName      - Name of the network
+		# Clients-(Object) - JSON Object holding array of Client ID's
+
+# Groups
+	
+	# GroupID GroupName Clients	
+	
+		# GroupID	   - Unique Group Identifier
+		# GroupName        - Name of the group
+		# Clients-(Object) - JSON Object holding array of Client ID's
+
+	
+
