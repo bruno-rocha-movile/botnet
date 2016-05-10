@@ -1,4 +1,7 @@
 # botnet
+
+Note this project turned into a larger project that will not be on github quite yet, so you won't see any more commits to this repo. However it is still a good reference for the time being so I'll leave it on here.
+
 A persistent and stealthy botnet using several methods of beaconing.
 
 
